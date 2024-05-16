@@ -1,11 +1,9 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:theater_events/model/support/extensions/StringCapitalization.dart';
 
 import '../behaviors/AppLocalizations.dart';
 import 'Home.dart';
-import 'UserRegistration.dart';
+import 'LoginPage.dart';
 
 class Layout extends StatefulWidget {
   final String? title;
@@ -46,7 +44,7 @@ class _LayoutState extends State<Layout> {
             IconButton(
             onPressed: () { Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => UserRegistration()),
+              MaterialPageRoute(builder: (context) => LoginPage()),
             );},
               icon: const Padding(
                 padding: EdgeInsets.only(right: 20.0),
@@ -64,7 +62,7 @@ class _LayoutState extends State<Layout> {
               Tab(
              icon: const Icon(Icons.home_rounded, color: Colors.white),
                   child: Text (
-                     AppLocalizations.of(context).translate("home").capitalize,
+                     AppLocalizations.of(context).translate("home").toUpperCase(),
                      style: const TextStyle(color: Colors.white)
               )
             )

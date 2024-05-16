@@ -7,10 +7,13 @@ import '../../model/objects/Spettacolo.dart';
 import '../widget/CircularIconButton.dart';
 import '../widget/InputField.dart';
 import '../widget/ShowCard.dart';
+import 'ShowDetails.dart';
 
 
 class SearchByName extends StatefulWidget {
-  const SearchByName({Key? key}) : super(key: key);
+  final String name;
+
+  const SearchByName({required this.name, Key? key}) : super(key: key);
 
 
   @override
@@ -19,7 +22,7 @@ class SearchByName extends StatefulWidget {
 
 class _SearchState extends State<SearchByName> {
   bool _searching = false;
-  List<Spettacolo>? _products;
+  List<Spettacolo>? _shows;
 
   TextEditingController _searchFiledController = TextEditingController();
 
@@ -65,9 +68,9 @@ class _SearchState extends State<SearchByName> {
 
   Widget bottom() {
     return  !_searching ?
-    _products == null ?
-    SizedBox.shrink() :
-    _products?.length == 0 ?
+    _shows == null ?
+    const SizedBox.shrink() :
+    _shows?.length == 0 ?
     noResults() :
     yesResults() :
     CircularProgressIndicator();
@@ -82,10 +85,21 @@ class _SearchState extends State<SearchByName> {
     return Expanded(
       child: Container(
         child: ListView.builder(
-          itemCount: _products?.length,
+          itemCount: _shows?.length,
           itemBuilder: (context, index) {
-            return ShowCard(
-              product: _products![index],
+            return GestureDetector(
+                onTap: () {
+              // Naviga verso la pagina dei dettagli passando il prodotto selezionato
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ShowDetails(show: _shows![index]),
+                ),
+              );
+            },
+            child: ShowCard(
+            product: _shows![index],
+            ),
             );
           },
         ),
@@ -96,12 +110,12 @@ class _SearchState extends State<SearchByName> {
   void _search() {
     setState(() {
       _searching = true;
-      _products = null;
+      _shows = null;
     });
     Model.sharedInstance.searchShow(_searchFiledController.text).then((result) {
       setState(() {
         _searching = false;
-        _products = result;
+        _shows = result;
       });
     });
   }

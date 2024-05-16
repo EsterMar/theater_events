@@ -3,6 +3,7 @@ import 'package:theater_events/model/support/extensions/StringCapitalization.dar
 import 'package:flutter/material.dart';
 
 import '../widget/CircularIconButton.dart';
+import '../widget/InputField.dart';
 import 'SearchByCity.dart';
 import 'SearchByName.dart';
 
@@ -17,7 +18,8 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
 
-  TextEditingController _searchFiledController = TextEditingController();
+  TextEditingController _searchByCity = TextEditingController();
+  TextEditingController _searchByName = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -36,9 +38,12 @@ class _HomeState extends State<Home> {
                     child: Align(
                       alignment: Alignment.topLeft,
                       child: Container(
-                        width: 200,
+                        padding: const EdgeInsets.only(left: 8.0),
                         // Larghezza desiderata per la barra di ricerca
+                        width: 700,
+                        //Preferisco TextField a InputField, in questo caso, perché dà più colore e rimpie di più la pagina.
                         child: TextField(
+                          controller: _searchByCity,
                           decoration: InputDecoration(
                             hintText: "Search theater by city",
                             filled: true,
@@ -51,13 +56,14 @@ class _HomeState extends State<Home> {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 0), // Spazio tra il campo di ricerca e il pulsante
+                  //const SizedBox(width: 0), // Spazio tra il campo di ricerca e il pulsante
                   CircularIconButton(
                     icon: Icons.search_rounded,
                     onPressed: () {
+                      String city= _searchByCity.text;
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => SearchByCity(searchFieldController: _searchFiledController)),
+                        MaterialPageRoute(builder: (context) => SearchByCity(city: city)),
                       );
                     },
                     padding: EdgeInsets.zero,
@@ -75,6 +81,7 @@ class _HomeState extends State<Home> {
                         width: 300,
                         // Larghezza desiderata per la barra di ricerca
                         child: TextField(
+                          controller: _searchByName,
                           decoration: InputDecoration(
                             hintText: "Search show by name",
                             filled: true,
@@ -91,9 +98,10 @@ class _HomeState extends State<Home> {
                   CircularIconButton(
                     icon: Icons.search_rounded,
                     onPressed: () {
+                      String name= _searchByName.text;
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => SearchByName()),
+                        MaterialPageRoute(builder: (context) => SearchByName(name: name)),
                       );
                     },
                     padding: EdgeInsets.zero,

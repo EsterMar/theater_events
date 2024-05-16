@@ -1,10 +1,11 @@
-import 'package:theater_events/UI/behaviors/AppLocalizations.dart';
-import 'package:theater_events/UI/widget/CircularIconButton.dart';
 import 'package:theater_events/UI/widget/InputField.dart';
 import 'package:theater_events/model/Model.dart';
 import 'package:theater_events/model/objects/Cliente.dart';
-import 'package:theater_events/model/support/extensions/StringCapitalization.dart';
 import 'package:flutter/material.dart';
+import '../../model/managers/RestManager.dart';
+import '../../model/support/authentication/accessToken.dart';
+import '../../model/support/authentication/KeycloakUserCreation.dart';
+import 'LoginPage.dart';
 
 
 class UserRegistration extends StatefulWidget {
@@ -17,107 +18,174 @@ class UserRegistration extends StatefulWidget {
 
 class _UserRegistrationState extends State<UserRegistration> {
   bool _adding = false;
-  Cliente? _justAddedUser;
+  late Cliente? _justAddedUser;
 
   TextEditingController _firstNameFiledController = TextEditingController();
   TextEditingController _lastNameFiledController = TextEditingController();
   TextEditingController _telephoneNumberFiledController = TextEditingController();
   TextEditingController _emailFiledController = TextEditingController();
   TextEditingController _addressFiledController = TextEditingController();
+  TextEditingController _passwordFiledController = TextEditingController();
 
+  late String accessToken;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
+      appBar: AppBar(
+        title: const Text('Registration'),
+        backgroundColor: Colors.red,
+        foregroundColor: Colors.black,
+      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-              child: Text(
-                AppLocalizations.of(context).translate("register").capitalize + "!",
-                style: const TextStyle(
-                  fontSize: 50,
-                  color: Colors.red,
-                ),
-              ),
-            ),
             Padding(
               padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
               child: Column(
                 children: [
                   InputField(
-                    labelText: AppLocalizations.of(context).translate("firstName").capitalize,
+                    labelText: "FirstName",
                     controller: _firstNameFiledController, initialValue: '',
                   ),
                   InputField(
-                    labelText: AppLocalizations.of(context).translate("lastName").capitalize,
+                    labelText: "LastName",
                     controller: _lastNameFiledController, initialValue: '',
                   ),
                   InputField(
-                    labelText: AppLocalizations.of(context).translate("telephoneNumber").capitalize,
+                    labelText: "TelephoneNumber",
                     controller: _telephoneNumberFiledController, initialValue: '',
                   ),
                   InputField(
-                    labelText: AppLocalizations.of(context).translate("email").capitalize,
+                    labelText: "Email",
                     controller: _emailFiledController, initialValue: '',
                   ),
                   InputField(
-                    labelText: AppLocalizations.of(context).translate("address").capitalize,
+                    labelText: "Address",
                     controller: _addressFiledController, initialValue: '',
                   ),
-                  CircularIconButton(
-                    icon: Icons.person_rounded,
-                    onPressed: () {
-                      _register();
+                  InputField(
+                    labelText: "Password",
+                    controller: _passwordFiledController, initialValue: '',
+                  ),
+
+
+                  const SizedBox(height: 16.0),
+                  ElevatedButton(
+                    onPressed: () async {
+                      final String firstName=_firstNameFiledController.text;
+                      final String lastName=_lastNameFiledController.text;
+                      final String password=_passwordFiledController.text;
+                      final String username=_emailFiledController.text;
+
+
+
+
+                      accessToken = (await AccessTokenRequest.getAccessToken())!;
+                      print("token: "+accessToken.toString());
+
+                      _register(accessToken);
+                      if (accessToken != null) {
+                        KeycloakUserCreation kuc = KeycloakUserCreation(firstName: firstName, lastName: lastName, password: password, username: username);
+                        print("kuc: "+kuc.toString());
+                        bool success = await kuc.createUserInKeycloak(accessToken);
+                        print("success: "+success.toString());
+
+                        if (success) {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text('Success'),
+                                content: Text('User created successfully.'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      // Reindirizza alla pagina di login
+                                      Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(builder: (context) => LoginPage()),
+                                      );
+                                    },
+                                    child: Text('OK'),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        } else {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text('Error'),
+                                content: Text('Email already used/Fill all fields '),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text('OK'),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        }
+                      } else {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text('Error'),
+                              content: Text('Failed to obtain access token'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text('OK'),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      }
                     },
-                    padding: EdgeInsets.zero,
-                  ),
-                  Center(
-                    child: Padding(
-                      padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
-                      child: _adding ?
-                      CircularProgressIndicator() :
-                      _justAddedUser != null ?
-                      Text(
-                          AppLocalizations.of(context).translate("just_added") + ":" + '${_justAddedUser?.name}' + " " + '${_justAddedUser?.surname}' + "!",
-                        style: const TextStyle(
-                          color: Colors.white,
-                        ),
-                      ):
-                      SizedBox.shrink(),
-                  ),
+                    child: const Text(
+                        'Register',
+                        style: TextStyle(
+                          color: Colors.red,
+                        )
+                    ),
                   ),
                 ],
               ),
             ),
           ],
+          ),
         ),
-      ),
     );
   }
 
-  void _register() {
-    setState(() {
-      _adding = true;
-      _justAddedUser = null;
-    });
-    Cliente user = Cliente(
-      name: _firstNameFiledController.text,
-      surname: _lastNameFiledController.text,
-      telephone_number: _telephoneNumberFiledController.text,
-      email: _emailFiledController.text,
-      address: _addressFiledController.text,
-    );
-    Model.sharedInstance.addUser(user).then((result) {
-      setState(() {
-        _adding = false;
-        _justAddedUser = result;
-        print("Il cliente aggiunto è: $user");
-      });
-    });
+
+  //da capire se va modificato
+  void _register(String accessToken) async {
+    try {
+      Cliente user = Cliente(
+        name: _firstNameFiledController.text,
+        surname: _lastNameFiledController.text,
+        telephone_number: _telephoneNumberFiledController.text,
+        email: _emailFiledController.text,
+        address: _addressFiledController.text,
+      );
+      print("Cliente: "+user.toString());
+      RestManager rm= Model.sharedInstance.getRestMan();
+      rm.setToken(accessToken);
+      await Model.sharedInstance.addUser(user);
+    } catch (e) {
+      print('Errore durante l\'aggiunta dell\'utente: $e');
+    }
   }
-
-
 }

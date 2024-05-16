@@ -3,7 +3,7 @@ class AuthenticationData {
   String? refreshToken;
   String? error;
   int? expiresIn;
-
+  static AuthenticationData? instance;
 
   AuthenticationData({this.accessToken, this.refreshToken, this.error, this.expiresIn,});
 
@@ -16,9 +16,25 @@ class AuthenticationData {
     );
   }
 
+  static AuthenticationData getInstance() {
+    if (instance == null) {
+      throw Exception('AuthenticationData is still not initialized');
+    }
+    return instance!;
+  }
+
+  String? getAccessToken() {
+    return accessToken;
+  }
+
+
   bool hasError() {
     return error != null;
   }
 
-
+  void reset() {
+    accessToken = '';
+    refreshToken = '';
+    expiresIn = 0;
+  }
 }

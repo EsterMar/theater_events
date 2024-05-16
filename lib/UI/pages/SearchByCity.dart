@@ -1,29 +1,29 @@
 import 'package:theater_events/UI/behaviors/AppLocalizations.dart';
 import 'package:theater_events/model/Model.dart';
 import 'package:theater_events/model/objects/Teatro.dart';
-import 'package:theater_events/model/support/extensions/StringCapitalization.dart';
 import 'package:flutter/material.dart';
 import '../widget/ThaterCard.dart';
 
 
-class SearchByCity extends StatefulWidget {
-  final TextEditingController searchFieldController;
 
-  SearchByCity({required this.searchFieldController, Key? key}) : super(key: key);
+class SearchByCity extends StatefulWidget {
+  final String city;
+
+  SearchByCity({required this.city, Key? key}) : super(key: key);
 
   @override
   _SearchByCityState createState() => _SearchByCityState();
 }
 
 class _SearchByCityState extends State<SearchByCity> {
-  late TextEditingController _searchFieldController;
-  List<Teatro>? _theaters;
+  late String _city;
+  List<Teatro>? _theaters= List.empty();
   bool _searching = false;
 
   @override
   void initState() {
     super.initState();
-    _searchFieldController = widget.searchFieldController;
+    _city = widget.city;
     _search(); // Avvia la ricerca quando la pagina viene inizializzata
   }
 
@@ -48,9 +48,9 @@ class _SearchByCityState extends State<SearchByCity> {
       child: Row(
         children: [
           Text(
-            _searchFieldController.text.isNotEmpty
-                ? "Risultati per la città ${_searchFieldController.text.capitalize}"
-                : "Non esiste nessun teatro nella città ${_searchFieldController.text.capitalize}",
+            _theaters != null && _theaters!.isNotEmpty
+                ? "Risultati per la città ${_city}"
+                : "Non esiste nessun teatro nella città ${_city}",
             style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
@@ -64,16 +64,23 @@ class _SearchByCityState extends State<SearchByCity> {
 
   Widget bottom() {
     return !_searching
-        ? _theaters == null || _theaters!.isEmpty
-        ? SizedBox.shrink()
-        : yesResults()
-        : CircularProgressIndicator();
+        ? _theaters == null?  //|| _theaters!.isEmpty
+          SizedBox.shrink():
+    _theaters!.isEmpty?
+          noResults():
+           yesResults():
+    CircularProgressIndicator();
   }
 
   Widget yesResults() {
     return Expanded(
       child: Container(
-        child: ListView.builder(
+        child: GridView.builder(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2, // Numero di colonne desiderate
+            crossAxisSpacing: 10, // Spazio orizzontale tra le colonne
+            mainAxisSpacing: 10, // Spazio verticale tra le righe
+          ),
           itemCount: _theaters!.length,
           itemBuilder: (context, index) {
             return TheaterCard(
@@ -86,7 +93,7 @@ class _SearchByCityState extends State<SearchByCity> {
   }
 
   Widget noResults() {
-    return Text(AppLocalizations.of(context).translate("no_results").capitalize + "!");
+    return Text("No_results!");
   }
 
   void _search() {
@@ -94,7 +101,7 @@ class _SearchByCityState extends State<SearchByCity> {
       _searching = true;
       _theaters = null;
     });
-    Model.sharedInstance.searchTheater(_searchFieldController.text).then((result) {
+    Model.sharedInstance.searchTheater(_city).then((result) {
       setState(() {
         _searching = false;
         // Verifica che result non sia nullo prima di assegnarlo a _theaters

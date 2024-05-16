@@ -7,17 +7,25 @@ class Cliente {
   String? email;
   String? address;
 
+Cliente.empty();
 
-
-  Cliente({this.id, this.code, this.name, this.surname, this.telephone_number, this.email, this.address});
+  Cliente({
+    this.id,
+    this.code,
+    this.name,
+    this.surname,
+    this.telephone_number,
+    this.email,
+    this.address,
+  });
 
   factory Cliente.fromJson(Map<String, dynamic> json) {
     return Cliente(
       id: json['id'],
       code: json['code'],
-      name: json['firstName'],
-      surname: json['lastName'],
-      telephone_number: json['telephoneNumber'],
+      name: json['name'],
+      surname: json['surname'],
+      telephone_number: json['telephone_number'],
       email: json['email'],
       address: json['address'],
     );
@@ -26,9 +34,9 @@ class Cliente {
   Map<String, dynamic> toJson() => {
     'id': id,
     'code': code,
-    'firstName': name,
-    'lastName': surname,
-    'telephoneNumber': telephone_number,
+    'name': name,
+    'surname': surname,
+    'telephone_number': telephone_number,
     'email': email,
     'address': address,
   };

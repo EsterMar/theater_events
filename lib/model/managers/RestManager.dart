@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'dart:convert';
-
 import 'package:theater_events/model/support/Constants.dart';
 import 'package:theater_events/model/support/ErrorListener.dart';
 import 'package:http/http.dart';
+
 
 
 enum TypeHeader {
@@ -17,53 +17,62 @@ class RestManager {
   String? token;
 
 
+  void setToken(String newToken) {
+    token = newToken;
+  }
+
+
+
   Future<String> _makeRequest(String serverAddress, String servicePath, String method, TypeHeader type, {Map<String, String>? value, dynamic body}) async {
     Uri uri = Uri.http(serverAddress, servicePath, value);
-    print('URI: $uri');
+    print("Uri di makeRequest: "+uri.toString());
     bool errorOccurred = false;
     while ( true ) {
       try {
         var response;
         // setting content type
-        String contentType= " ";
+        String contentType = "";
         dynamic formattedBody;
         if ( type == TypeHeader.json ) {
           contentType = "application/json;charset=utf-8";
           formattedBody = json.encode(body);
+          print("Content-type:"+contentType);
+          print("formattedBody:"+formattedBody);
         }
         else if ( type == TypeHeader.urlencoded ) {
           contentType = "application/x-www-form-urlencoded";
           formattedBody = body.keys.map((key) => "$key=${body[key]}").join("&");
+          print("Content-type:"+contentType);
+          print("formattedBody:"+formattedBody);
         }
         // setting headers
-        Map<String, String> headers = {};
+        Map<String, String> headers = Map();
         headers[HttpHeaders.contentTypeHeader] = contentType;
         if ( token != null ) {
           headers[HttpHeaders.authorizationHeader] = 'bearer $token';
         }
-        print("URI: $uri");
         // making request
         switch ( method ) {
-          case "POST":
+          case "post":
             response = await post(
               uri,
               headers: headers,
               body: formattedBody,
             );
             break;
-          case "GET":
+          case "get":
             response = await get(
               uri,
               headers: headers,
             );
             break;
-          case "PUT":
+          case "put":
             response = await put(
               uri,
               headers: headers,
             );
             break;
-          case "DELETE":
+          case "delete":
             response = await delete(
               uri,
               headers: headers,
@@ -71,13 +80,15 @@ class RestManager {
             break;
         }
         if ( delegate != null && errorOccurred ) {
-          delegate?.errorNetworkGone();
+          delegate!.errorNetworkGone();
           errorOccurred = false;
         }
+        print(response.body);
         return response.body;
       } catch(err) {
+        print(err);
         if ( delegate != null && !errorOccurred ) {
-          delegate?.errorNetworkOccurred(Constants.MESSAGE_CONNECTION_ERROR);
+          delegate!.errorNetworkOccurred(Constants.MESSAGE_CONNECTION_ERROR);
           errorOccurred = true;
         }
         await Future.delayed(const Duration(seconds: 5), () => null); // not the best solution
@@ -86,20 +97,19 @@ class RestManager {
   }
 
   Future<String> makePostRequest(String serverAddress, String servicePath, dynamic value, {TypeHeader type = TypeHeader.json}) async {
-    return _makeRequest(serverAddress, servicePath, "POST", type, body: value);
+    return _makeRequest(serverAddress, servicePath, "post", type, body: value);
   }
 
-  Future<String> makeGetRequest(String serverAddress, String servicePath, [Map<String, String>? value, TypeHeader? type]) async {
-    return _makeRequest(serverAddress, servicePath, "GET", type ?? TypeHeader.json, value: value);
+  Future<String> makeGetRequest(String serverAddress, String servicePath, [Map<String, String>? value, TypeHeader type = TypeHeader.json]) async {
+    return _makeRequest(serverAddress, servicePath, "get", type, value: value);
   }
 
-  Future<String> makePutRequest(String serverAddress, String servicePath, [Map<String, String>? value, TypeHeader? type]) async {
-    return _makeRequest(serverAddress, servicePath, "PUT", type ?? TypeHeader.json, value: value);
+  Future<String> makePutRequest(String serverAddress, String servicePath, [Map<String, String>? value, TypeHeader type = TypeHeader.json]) async {
+    return _makeRequest(serverAddress, servicePath, "put", type, value: value);
   }
 
-  Future<String> makeDeleteRequest(String serverAddress, String servicePath, [Map<String, String>? value, TypeHeader? type]) async {
-    return _makeRequest(serverAddress, servicePath, "DELETE", type ?? TypeHeader.json, value: value);
+  Future<String> makeDeleteRequest(String serverAddress, String servicePath, [Map<String, String>? value, TypeHeader type = TypeHeader.json]) async {
+    return _makeRequest(serverAddress, servicePath, "delete", type, value: value);
   }
-
 
 }
