@@ -79,11 +79,9 @@ class _UserRegistrationState extends State<UserRegistration> {
                       final String password=_passwordFiledController.text;
                       final String username=_emailFiledController.text;
 
-
-
-
                       accessToken = (await AccessTokenRequest.getAccessToken())!;
                       print("token: "+accessToken.toString());
+
 
                       _register(accessToken);
                       if (accessToken != null) {

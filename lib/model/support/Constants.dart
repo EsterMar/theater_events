@@ -22,8 +22,9 @@ class Constants {
   static final String REQUEST_SEARCH_THEATER = "/teatro/search/by_city";
   static final String REQUEST_SEARCH_SHOW = "/spettacolo/search/byTitle";
   static final String REQUEST_LIST_EVENTS = "/evento/search/by_show";
+  static final String REQUEST_LIST_SHOWS = "/spettacolo/search/by_theater";
   static final String REQUEST_BUY_TICKET = "/biglietto/create";
-  static final String REQUEST_PRICE_TICKETS = "/biglietto/price_by_numberTickets";
+  static final String REQUEST_PRICE_TICKETS = "/spettacolo/price_by_numberTickets";
 
 
   // responses

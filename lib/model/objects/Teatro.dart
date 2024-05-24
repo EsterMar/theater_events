@@ -7,10 +7,10 @@ class Teatro {
   String? city;
   String? address;
   String? telephone_number;
-  Spettacolo? spettacolo;
+
 
   //uso required perché il valore di id non deve essere nullo essendo la chiave nel DB
-  Teatro({this.id, this.name, this.city, this.address, this.telephone_number,this.spettacolo});
+  Teatro({this.id, this.name, this.city, this.address, this.telephone_number});
 
   factory Teatro.fromJson(Map<String, dynamic> json) {
     return Teatro(
@@ -19,7 +19,6 @@ class Teatro {
       city: json['city'],
       address: json['address'],
       telephone_number: json['telephone_number'],
-      spettacolo: json['spettacolo'],
     );
   }
 
@@ -30,7 +29,6 @@ class Teatro {
         'city': city,
         'address': address,
         'telephone_number':telephone_number,
-        'spettacolo':spettacolo,
       };
 
 

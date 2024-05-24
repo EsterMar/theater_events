@@ -1,8 +1,8 @@
-import 'package:theater_events/UI/behaviors/AppLocalizations.dart';
 import 'package:theater_events/model/Model.dart';
 import 'package:theater_events/model/objects/Teatro.dart';
 import 'package:flutter/material.dart';
 import '../widget/ThaterCard.dart';
+import 'ShowsInTheater.dart';
 
 
 
@@ -43,21 +43,22 @@ class _SearchByCityState extends State<SearchByCity> {
   }
 
   Widget top() {
+    print (_theaters.toString());
     return Padding(
       padding: EdgeInsets.all(10),
       child: Row(
         children: [
           Text(
             _theaters != null && _theaters!.isNotEmpty
-                ? "Risultati per la città ${_city}"
-                : "Non esiste nessun teatro nella città ${_city}",
+                ? "Risultati per la città ${_city}:"
+                : "Non esiste nessun teatro nella città ${_city}!",
             style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
               color: Colors.white,
             ),
           ),
-        ],
+        ],//children
       ),
     );
   }
@@ -75,16 +76,26 @@ class _SearchByCityState extends State<SearchByCity> {
   Widget yesResults() {
     return Expanded(
       child: Container(
-        child: GridView.builder(
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2, // Numero di colonne desiderate
-            crossAxisSpacing: 10, // Spazio orizzontale tra le colonne
-            mainAxisSpacing: 10, // Spazio verticale tra le righe
-          ),
-          itemCount: _theaters!.length,
-          itemBuilder: (context, index) {
-            return TheaterCard(
-              theater: _theaters![index],
+        child: ListView.builder(
+          itemCount: _theaters?.length,
+          itemBuilder: (context,index) {
+            return GestureDetector(
+              onTap: () {
+                // Naviga verso la pagina dei dettagli passando il prodotto selezionato
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ShowsInTheater(theaterId: _theaters![index].id!),
+                  ),
+                );
+
+              },
+              child: SizedBox(
+                height: 200, // regola l'altezza
+                child: TheaterCard(
+                  theater: _theaters![index],
+                ),
+              ),
             );
           },
         ),
@@ -93,7 +104,9 @@ class _SearchByCityState extends State<SearchByCity> {
   }
 
   Widget noResults() {
-    return Text("No_results!");
+    return Text("No_results!",
+                  style: TextStyle( color: Colors.white)
+    );
   }
 
   void _search() {
@@ -110,4 +123,5 @@ class _SearchByCityState extends State<SearchByCity> {
     });
   }
 }
+
 

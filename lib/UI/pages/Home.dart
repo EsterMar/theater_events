@@ -2,10 +2,11 @@ import 'package:theater_events/UI/behaviors/AppLocalizations.dart';
 import 'package:theater_events/model/support/extensions/StringCapitalization.dart';
 import 'package:flutter/material.dart';
 
+import '../../model/Model.dart';
+import '../../model/objects/Spettacolo.dart';
 import '../widget/CircularIconButton.dart';
-import '../widget/InputField.dart';
 import 'SearchByCity.dart';
-import 'SearchByName.dart';
+import 'ShowDetails.dart';
 
 
 class Home extends StatefulWidget {
@@ -95,7 +96,8 @@ class _HomeState extends State<Home> {
                     ),
                   ),
                   //const SizedBox(width: 2), // Spazio tra il campo di ricerca e il pulsante
-                  CircularIconButton(
+
+                  /*CircularIconButton(
                     icon: Icons.search_rounded,
                     onPressed: () {
                       String name= _searchByName.text;
@@ -103,6 +105,16 @@ class _HomeState extends State<Home> {
                         context,
                         MaterialPageRoute(builder: (context) => SearchByName(name: name)),
                       );
+                    },
+                    padding: EdgeInsets.zero,
+                  ),*/
+
+                  CircularIconButton(
+                    icon: Icons.search_rounded,
+                    onPressed: () {
+                      String name = _searchByName.text;
+                      print("name: "+name);
+                      _searchAndNavigate(context, name);
                     },
                     padding: EdgeInsets.zero,
                   ),
@@ -144,4 +156,42 @@ class _HomeState extends State<Home> {
     );
   }
 
+  void _searchAndNavigate(BuildContext context, String name) async {
+    print("inizio searchAndNavigate");
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => Center(child: CircularProgressIndicator()),
+    );
+
+    List<Spettacolo>? shows = await Model.sharedInstance.searchShow(name);
+    print("shows: "+shows.toString());
+    // Nasconde l'indicatore progress
+    Navigator.of(context).pop();
+
+    // Se lo show esiste, naviga in ShowDetails, altrimenti mostra un messaggio di errore
+    if (shows != null && shows.isNotEmpty) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ShowDetails(show: shows.first),
+        ),
+      );
+    } else {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text("Errore"),
+          content: Text("Non esiste nessuno spettacolo con il titolo $name!"),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text("OK"),
+            ),
+          ],
+        ),
+      );
+    }
+  }
 }
+

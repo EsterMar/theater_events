@@ -19,7 +19,7 @@ class Posto {
       row: json['row'],
       available: json['available'],
       version: json['version'],
-      sala: json['sala'],
+      sala: json['sala']!= null ? Sala.fromJson(json['sala']) : null,
     );
   }
 
@@ -30,7 +30,7 @@ class Posto {
         'row': row,
         'available': available,
         'version': version,
-        'sala': sala,
+        'sala': sala?.toJson(),
 
 };
   @override

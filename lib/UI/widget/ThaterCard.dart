@@ -14,7 +14,8 @@ class TheaterCard extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20.0),
       ),
-      child: Padding(
+      child: Container(
+        color: Colors.black,
         padding: EdgeInsets.all(10),
         child: Column(
           children: [

@@ -7,6 +7,7 @@ class AuthenticationData {
 
   AuthenticationData({this.accessToken, this.refreshToken, this.error, this.expiresIn,});
 
+
   factory AuthenticationData.fromJson(Map<String, dynamic> json) {
     return AuthenticationData(
       accessToken: json['access_token'],
@@ -16,9 +17,11 @@ class AuthenticationData {
     );
   }
 
+
   static AuthenticationData getInstance() {
     if (instance == null) {
-      throw Exception('AuthenticationData is still not initialized');
+      return AuthenticationData(accessToken: "",refreshToken: "");
+      //throw Exception('AuthenticationData is still not initialized');
     }
     return instance!;
   }

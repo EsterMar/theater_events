@@ -16,7 +16,7 @@ class Sala {
       room_number: json['room_number'],
       zone: json['zone'],
       capacity: json['capacity'],
-      teatro: json['teatro'],
+      teatro: json['teatro']!= null ? Teatro.fromJson(json['teatro']):null,
     );
   }
 
@@ -25,7 +25,7 @@ class Sala {
         'room_number': room_number,
         'zone': zone,
         'capacity': capacity,
-        'teatro': teatro,
+        'teatro': teatro?.toJson(),
       };
 
 

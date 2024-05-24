@@ -74,6 +74,11 @@ flutter:
   assets:
     -  localizable/
     -  C:/Users/Ester/IdeaProjects/theater_events/lib/images/sipario-project.jpg
+    -  C:/Users/Ester/Desktop/Piattaforme/esercitazion/Mamma mia.jpg
+    -  C:/Users/Ester/Desktop/Piattaforme/esercitazion/Sei personaggi in cerca di autore.jpg
+    -  C:/Users/Ester/Desktop/Piattaforme/esercitazion/Ma...diamoci del tu.jpg
+    -  C:/Users/Ester/Desktop/Piattaforme/esercitazion/Romeo e Giulietta.jpg
+    -  C:/Users/Ester/Desktop/Piattaforme/esercitazion/Grease.jpg
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 

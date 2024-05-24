@@ -1,11 +1,8 @@
-import 'package:theater_events/UI/behaviors/AppLocalizations.dart';
-import 'package:theater_events/model/Model.dart';
-import 'package:theater_events/model/support/extensions/StringCapitalization.dart';
+/*import 'package:theater_events/model/Model.dart';
+
 import 'package:flutter/material.dart';
 
 import '../../model/objects/Spettacolo.dart';
-import '../widget/CircularIconButton.dart';
-import '../widget/InputField.dart';
 import '../widget/ShowCard.dart';
 import 'ShowDetails.dart';
 
@@ -13,23 +10,30 @@ import 'ShowDetails.dart';
 class SearchByName extends StatefulWidget {
   final String name;
 
-  const SearchByName({required this.name, Key? key}) : super(key: key);
+  SearchByName({required this.name, Key? key}) : super(key: key);
 
 
   @override
-  _SearchState createState() => _SearchState();
+  _SearchByNameState createState() => _SearchByNameState();
 }
 
-class _SearchState extends State<SearchByName> {
+class _SearchByNameState extends State<SearchByName> {
   bool _searching = false;
-  List<Spettacolo>? _shows;
+  List<Spettacolo>? _shows= List.empty();
+  late String _name;
 
-  TextEditingController _searchFiledController = TextEditingController();
+  @override
+  void initState() {
+    super.initState();
+    _name = widget.name;
+    _search(); // Avvia la ricerca quando la pagina viene inizializzata
+  }
 
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       body: Center(
         child: Column(
           children: [
@@ -43,42 +47,38 @@ class _SearchState extends State<SearchByName> {
 
   Widget top() {
     return Padding(
-      padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+      padding: EdgeInsets.all(10),
       child: Row(
         children: [
-          Flexible(
-            child: InputField(
-              labelText: AppLocalizations.of(context).translate("search").capitalize,
-              controller: _searchFiledController,
-              onSubmit: (value) {
-                _search();
-              }, initialValue: '',
-            ),
-          ),
-          CircularIconButton(
-            icon: Icons.search_rounded,
-            onPressed: () {
-              _search();
-            }, padding: EdgeInsets.zero,
-          ),
-        ],
-      ),
+          Text(
+            _shows != null && _shows!.isNotEmpty
+                ? "Risultati per ${_name}:"
+                : "Non esiste nessuno spettacolo con il titolo ${_name}!",
+                style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                  ),
+                ),
+              ],
+      )
     );
   }
 
   Widget bottom() {
-    return  !_searching ?
-    _shows == null ?
-    const SizedBox.shrink() :
-    _shows?.length == 0 ?
-    noResults() :
-    yesResults() :
+    return  !_searching
+      ? _shows == null
+         ? SizedBox.shrink() :
+    _shows!.isEmpty ?
+        noResults() :
+        yesResults() :
     CircularProgressIndicator();
-
   }
 
   Widget noResults() {
-    return Text(AppLocalizations.of(context).translate("no_results").capitalize + "!");
+    return Text("No_results!",
+        style: TextStyle( color: Colors.white)
+    );
   }
 
   Widget yesResults() {
@@ -97,9 +97,12 @@ class _SearchState extends State<SearchByName> {
                 ),
               );
             },
-            child: ShowCard(
-            product: _shows![index],
-            ),
+            child: SizedBox(
+              height: 200,
+              child: ShowCard(
+                show: _shows![index],
+                ),
+              ),
             );
           },
         ),
@@ -112,11 +115,16 @@ class _SearchState extends State<SearchByName> {
       _searching = true;
       _shows = null;
     });
-    Model.sharedInstance.searchShow(_searchFiledController.text).then((result) {
+    Model.sharedInstance.searchShow(_name).then((result) {
       setState(() {
         _searching = false;
-        _shows = result;
+        // Verifica che result non sia nullo prima di assegnarlo a _theaters
+        _shows = result ?? [];
       });
     });
   }
-}
+
+}*/
+
+
+

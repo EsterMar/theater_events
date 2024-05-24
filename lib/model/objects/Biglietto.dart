@@ -17,18 +17,18 @@ class Biglietto {
     return Biglietto(
       id: json['id'],
       price: json['price'],
-      cliente: json['cliente'],
-      evento: json['evento'],
-      posto: json['posto'],
+      cliente: json['cliente']!= null ? Cliente.fromJson(json['cliente']) : null,
+      evento: json['evento']!= null ? Evento.fromJson(json['evento']) : null,
+      posto: json['posto'] != null ? Posto.fromJson(json['posto']) : null,
     );
   }
 
   Map<String, dynamic> toJson() => {
     'id': id,
     'price': price,
-    'cliente': cliente,
-    'evento': evento,
-    'posto': posto,
+    'cliente': cliente?.toJson(),
+    'evento': evento?.toJson(),
+    'posto': posto?.toJson(),
   };
 
   @override

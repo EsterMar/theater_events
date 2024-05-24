@@ -65,6 +65,7 @@ class RestManager {
               uri,
               headers: headers,
             );
+            print(response.body.toString());
             break;
           case "put":
             response = await put(
@@ -86,7 +87,7 @@ class RestManager {
         print(response.body);
         return response.body;
       } catch(err) {
-        print(err);
+        print("eer: "+err.toString());
         if ( delegate != null && !errorOccurred ) {
           delegate!.errorNetworkOccurred(Constants.MESSAGE_CONNECTION_ERROR);
           errorOccurred = true;
@@ -100,16 +101,16 @@ class RestManager {
     return _makeRequest(serverAddress, servicePath, "post", type, body: value);
   }
 
-  Future<String> makeGetRequest(String serverAddress, String servicePath, [Map<String, String>? value, TypeHeader type = TypeHeader.json]) async {
-    return _makeRequest(serverAddress, servicePath, "get", type, value: value);
-  }
-
   Future<String> makePutRequest(String serverAddress, String servicePath, [Map<String, String>? value, TypeHeader type = TypeHeader.json]) async {
     return _makeRequest(serverAddress, servicePath, "put", type, value: value);
   }
 
   Future<String> makeDeleteRequest(String serverAddress, String servicePath, [Map<String, String>? value, TypeHeader type = TypeHeader.json]) async {
     return _makeRequest(serverAddress, servicePath, "delete", type, value: value);
+  }
+
+  Future<String> makeGetRequest(String serverAddress, String servicePath, [Map<String, String>? value, TypeHeader type = TypeHeader.json]) async {
+    return _makeRequest(serverAddress, servicePath, "get", type, value: value);
   }
 
 }

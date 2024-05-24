@@ -10,34 +10,32 @@ class Evento {
   Sala? sala;
   Spettacolo? spettacolo;
 
-
-  //uso required perché il valore di id non deve essere nullo essendo la chiave nel DB
   Evento({this.id, this.hours, this.data, this.posto, this.sala, this.spettacolo});
 
   factory Evento.fromJson(Map<String, dynamic> json) {
     return Evento(
       id: json['id'],
       hours: json['hours'],
-      data: json['data'],
-      posto: json['posto'],
-      sala: json['sala'],
-      spettacolo: json['spettacolo'],
+      data: json['data'] != null ? DateTime.fromMillisecondsSinceEpoch(json['data']) : null,
+      posto: json['posto'] != null ? Posto.fromJson(json['posto']) : null,
+      sala: json['sala'] != null ? Sala.fromJson(json['sala']) : null,
+      spettacolo: json['spettacolo'] != null ? Spettacolo.fromJson(json['spettacolo']) : null,
     );
   }
 
   Map<String, dynamic> toJson() => {
     'id': id,
     'hours': hours,
-    'data': data,
-    'posto': posto,
-    'sala': sala,
-    'spettacolo': spettacolo,
+    'data': data?.millisecondsSinceEpoch,
+    'posto': posto?.toJson(),
+    'sala': sala?.toJson(),
+    'spettacolo': spettacolo?.toJson(),
   };
+
+
 
   @override
   String toString() {
-    return '${spettacolo?.title} ${data.toString()} $hours';
+    return '${data.toString()} $hours ${sala.toString()}';
   }
-
-
 }
