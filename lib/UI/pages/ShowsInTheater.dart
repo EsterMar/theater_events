@@ -1,13 +1,15 @@
 import 'package:theater_events/model/Model.dart';
 import 'package:flutter/material.dart';
+import '../../model/objects/Cliente.dart';
 import '../../model/objects/Spettacolo.dart';
 import '../widget/ShowCard.dart';
 import 'ShowDetails.dart';
 
 class ShowsInTheater extends StatefulWidget {
   final int theaterId;
+  final Cliente cliente;
 
-  ShowsInTheater({required this.theaterId, Key? key}) : super(key: key);
+  ShowsInTheater({required this.theaterId, required this.cliente, Key? key}) : super(key: key);
 
   @override
   _ShowsInTheaterState createState() => _ShowsInTheaterState();
@@ -88,7 +90,7 @@ class _ShowsInTheaterState extends State<ShowsInTheater> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ShowDetails(show: _shows![index]),
+                    builder: (context) => ShowDetails(show: _shows![index], cliente: widget.cliente),
                   ),
                 );
               },

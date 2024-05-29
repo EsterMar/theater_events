@@ -9,7 +9,7 @@ import 'package:theater_events/model/support/ParamAddTicket.dart';
 import 'package:theater_events/model/support/authentication/AuthenticationData.dart';
 
 import 'objects/Biglietto.dart';
-import 'objects/Sala.dart';
+import 'objects/Posto.dart';
 import 'objects/Spettacolo.dart';
 
 
@@ -71,7 +71,7 @@ class Model {
       print("shows: $shows");
       return shows;
     } catch (e) {
-      print("error in searchByName show: $e");
+      print("error in searchShow show: $e");
       return List<Spettacolo>.empty(); // Restituisci una lista vuota in caso di errore
     }
   }
@@ -103,7 +103,7 @@ class Model {
       print("events: $events");
       return events;
     } catch (e) {
-      print("error in searchByName show: $e");
+      print("error in allEventsFromShow show: $e");
       return List<Evento>.empty(); // Restituisci una lista vuota in caso di errore
     }
   }
@@ -134,10 +134,41 @@ class Model {
       print("shows: $shows");
       return shows;
     } catch (e) {
-      print("error in searchByName show: $e");
+      print("error in allShowFromTheater show: $e");
       return List<Spettacolo>.empty(); // Restituisci una lista vuota in caso di errore
     }
   }
+
+  Future<List<int>> getAllFreeSeats(int id_sala) async {
+    Map<String, String> params = {'id_sala': id_sala.toString()};
+    print("id_sala: " + id_sala.toString());
+
+    try {
+      _restManager.setToken(authenticationData.getAccessToken()!);
+      final response = await _restManager.makeGetRequest(
+        Constants.ADDRESS_STORE_SERVER,
+        Constants.REQUEST_FREE_SEATS,
+        params,
+      );
+
+      // Stampa la risposta ricevuta per il debug
+      print("response: $response");
+
+      // Decodifica la risposta JSON
+      final List<dynamic> jsonList = json.decode(response);
+
+      // Assumi che jsonList sia una lista di interi e ne fa la conversione
+      List<int> seatIds = jsonList.cast<int>();
+
+      print("seatIds: $seatIds");
+      return seatIds;
+    } catch (e) {
+      print("error in getAllFreeSeats show: $e");
+      return List<int>.empty(); // Restituisci una lista vuota in caso di errore
+    }
+  }
+
+
 
 
   Future<int> allSeatsFromSala(int id_sala) async {
@@ -178,10 +209,49 @@ class Model {
         }
       }
     } catch (e) {
-      print("Errore in seatsNumbers: " + e.toString());
+      print("Errore in allSeatsFromSala: " + e.toString());
       return -1;
     }
   }
+
+  Future<Posto?> seatById(int id_posto) async {
+    Map<String, String> params = {'id_posto': id_posto.toString()};
+    print("id_posto: $id_posto");
+
+    try {
+      _restManager.setToken(authenticationData.getAccessToken()!);
+      final response = await _restManager.makeGetRequest(
+        Constants.ADDRESS_STORE_SERVER,
+        Constants.REQUEST_SEATS_BY_ID,
+        params,
+      );
+
+      // Stampa la risposta ricevuta per il debug
+      print("response: $response");
+
+      // Verifica se la risposta è vuota
+      if (response == null || response.isEmpty) {
+        print("Errore: la risposta è vuota");
+        return null;
+      }
+
+      // Decodifica la risposta JSON in un oggetto Posto
+      try {
+        return Posto.fromJson(json.decode(response));
+      } catch (e) {
+        // Se si verifica un errore durante l'analisi della risposta JSON, restituisci null
+        print("Errore durante l'interpretazione della risposta come oggetto Posto: $e");
+        return null;
+      }
+    } catch (e) {
+      // Se si verifica un errore durante la richiesta, restituisci null
+      print("Errore durante la richiesta: $e");
+      return null;
+    }
+
+  }
+
+
 
 
   Future<double> priceByTickets(int id_spettacolo, int chosenTickets) async {
@@ -213,6 +283,37 @@ class Model {
     }
   }
 
+  Future<Cliente?> getByEmail(String email) async {
+    Map<String, String> params = {'email': email};
+    print("email: $email");
+
+    try {
+      _restManager.setToken(authenticationData.getAccessToken()!);
+      final response = await _restManager.makeGetRequest(
+        Constants.ADDRESS_STORE_SERVER,
+        Constants.REQUEST_USER_BY_EMAIL,
+        params,
+      );
+
+      // Stampa la risposta ricevuta per il debug
+      print("response: $response");
+
+      // Decodifica la risposta JSON in un oggetto Cliente
+      try {
+        // Se l'analisi della risposta JSON avviene con successo, restituisci un oggetto Cliente
+        return Cliente.fromJson(json.decode(response));
+      } catch (e) {
+        // Se si verifica un errore durante l'analisi della risposta JSON, restituisci null
+        print("Errore durante l'interpretazione della risposta come oggetto Cliente: $e");
+        return null;
+      }
+    } catch (e) {
+      // Se si verifica un errore durante la richiesta, restituisci null
+      print("Errore durante la richiesta: $e");
+      return null;
+    }
+  }
+
 
   Future<Cliente> addUser(Cliente user) async {
       try {
@@ -239,8 +340,10 @@ class Model {
 
     Future<Biglietto> addTicket(ParamAddTicket pat) async {
       try {
+        _restManager.setToken(authenticationData.getAccessToken()!);
         String rawResult = await _restManager.makePostRequest(Constants.ADDRESS_STORE_SERVER, Constants.REQUEST_BUY_TICKET, pat);
         if ( rawResult.contains(Constants.RESPONSE_ERROR_MAIL_USER_ALREADY_EXISTS) ) {
+          print(Constants.ADDRESS_STORE_SERVER+Constants.REQUEST_BUY_TICKET);
           return Biglietto(id: -1); // sostituisce il valore null a causa della null-safety
         }
         else {

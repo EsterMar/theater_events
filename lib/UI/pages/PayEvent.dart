@@ -2,12 +2,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../model/Model.dart';
+import '../../model/objects/Cliente.dart';
 import '../../model/objects/Evento.dart';
+import 'CustomerInfo.dart';
+
 
 class PayEvent extends StatefulWidget {
   final Evento evento;
+  final Cliente cliente;
 
-  PayEvent({Key? key, required this.evento}) : super(key: key);
+  PayEvent({Key? key, required this.evento, required this.cliente}) : super(key: key);
 
   @override
   _PayEventState createState() => _PayEventState();
@@ -72,7 +76,7 @@ class _PayEventState extends State<PayEvent> {
             Text(
               'Numero biglietti per: ${widget.evento.spettacolo?.title}',
               style: TextStyle(
-                  fontSize: 40,
+                  fontSize: 50,
                   color: Colors.red
                 )
             ),
@@ -85,8 +89,8 @@ class _PayEventState extends State<PayEvent> {
                    color: Colors.white, // Colore di sfondo bianco
                      borderRadius: BorderRadius.circular(8.0), // Bordo arrotondato per il quadratino
                     ),
-                width: 40, // Larghezza del quadratino
-                height: 40,
+                width: 50, // Larghezza del quadratino
+                height: 50,
                 child: IconButton(
                   icon: Icon(Icons.remove),
                   onPressed: () {
@@ -107,10 +111,11 @@ class _PayEventState extends State<PayEvent> {
                   },
                  ),
                  ),
+                SizedBox(width: 20),
                 Text(
                   '$chosenTickets',
                   style: TextStyle(
-                      fontSize: 20,
+                      fontSize: 30,
                       color: Colors.red
                   ),
                 ),
@@ -120,8 +125,8 @@ class _PayEventState extends State<PayEvent> {
                     color: Colors.white, // Colore di sfondo bianco
                     borderRadius: BorderRadius.circular(8.0), // Bordo arrotondato per il quadratino
                   ),
-                  width: 40, // Larghezza del quadratino
-                  height: 40, // Altezza del quadratino
+                  width: 50, // Larghezza del quadratino
+                  height: 50, // Altezza del quadratino
                   child: IconButton(
                   icon: Icon(Icons.add),
                   onPressed: () {
@@ -148,10 +153,39 @@ class _PayEventState extends State<PayEvent> {
                 Text(
                   'Prezzo totale: €$totalPrice',
                   style: TextStyle(
-                    fontSize: 20,
+                    fontSize: 30,
                     color: Colors.red
                   ),
                 ),
+            SizedBox(height: 60),
+            SizedBox(height: 60),
+            GestureDetector(
+              onTap: () async {
+                // Attendere il completamento della Future per ottenere i posti disponibili
+                List<int> availablePostIds = await Model.sharedInstance.getAllFreeSeats(widget.evento.sala!.room_number!);
+                // Naviga verso una nuova pagina quando il contenitore è cliccato
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+
+                    builder: (context) => CustomerInfo(numberOfTickets: chosenTickets, availablePostIds: availablePostIds, evento: widget.evento, cliente: widget.cliente),
+                  ),
+                );
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white, // Colore di sfondo bianco
+                  borderRadius: BorderRadius.circular(8.0), // Bordo arrotondato per il quadratino
+                ),
+                width: 250, // Larghezza del quadratino
+                height: 50,
+                alignment: Alignment.center,
+                child: Text(
+                  'Acquista biglietti!',
+                  style: TextStyle(fontSize: 30, color: Colors.black),
+                ),
+              ),
+            ),
               ],
             ),
           ),

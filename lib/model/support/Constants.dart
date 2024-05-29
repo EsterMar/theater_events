@@ -18,6 +18,9 @@ class Constants {
 
   // requests
   static final String REQUEST_ADD_USER = "/cliente/register";
+  static final String REQUEST_USER_BY_EMAIL = "/cliente/by_email";
+  static final String REQUEST_FREE_SEATS= "posto/get_free_seats";
+  static final String REQUEST_SEATS_BY_ID= "posto/seats_by_id";
   static final String REQUEST_SEATS_NUMBER = "/sala/seats";
   static final String REQUEST_SEARCH_THEATER = "/teatro/search/by_city";
   static final String REQUEST_SEARCH_SHOW = "/spettacolo/search/byTitle";

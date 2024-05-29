@@ -2,14 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:theater_events/UI/pages/PayEvent.dart';
 
 import '../../model/Model.dart';
+import '../../model/objects/Cliente.dart';
 import '../../model/objects/Evento.dart';
 import '../../model/objects/Spettacolo.dart';
 import 'package:intl/intl.dart';
 
 class ShowDetails extends StatefulWidget {
   final Spettacolo show;
+  final Cliente cliente;
 
-  ShowDetails({Key? key, required this.show}) : super(key: key);
+  ShowDetails({Key? key, required this.show, required this.cliente}) : super(key: key);
 
   @override
   _ShowDetailsState createState() => _ShowDetailsState();
@@ -162,7 +164,7 @@ class _ShowDetailsState extends State<ShowDetails> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => PayEvent(evento: evento),
+                        builder: (context) => PayEvent(evento: evento, cliente: widget.cliente),
                       ),
                     );
                   },

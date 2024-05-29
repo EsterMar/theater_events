@@ -5,6 +5,8 @@ import 'package:theater_events/model/support/authentication/setToken.dart';
 
 import 'package:jwt_decoder/jwt_decoder.dart';
 
+import '../../model/Model.dart';
+import '../../model/objects/Cliente.dart';
 import 'Home.dart';
 
 
@@ -66,6 +68,7 @@ class _KeycloakLoginScreenState extends State<KeycloakLoginScreen> {
     SetToken.username = widget.username;
     SetToken.clientSecret = widget.clientSecret;
 
+    print("username: "+widget.username.toString());
     accessToken = await SetToken.setToken();
 
     if (accessToken != null) {
@@ -75,7 +78,27 @@ class _KeycloakLoginScreenState extends State<KeycloakLoginScreen> {
       });
       print("isLoading: "+isLoading.toString());
       //_navigateToLoginPage(context);
-      _navigateToHomePage(context);
+      Cliente? cliente = await Model.sharedInstance.getByEmail(widget.username);
+      if (cliente != null) {
+        _navigateToHomePage(context, cliente);
+      } else {
+        // Gestione degli errori nel recupero dell'oggetto Cliente
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Error'),
+            content: Text('Failed to get client information.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text('OK'),
+              ),
+            ],
+          ),
+        );
+      }
     } else {
       // Gestione degli errori di login
       showDialog(
@@ -133,11 +156,11 @@ class _KeycloakLoginScreenState extends State<KeycloakLoginScreen> {
       ),
     );
   }*/
-  void _navigateToHomePage(BuildContext context) {
+  void _navigateToHomePage(BuildContext context, Cliente cliente) {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (context) => Home(), // Sostituisci 'HomePage()' con il nome della tua pagina home
+        builder: (context) => Home(cliente: cliente),
       ),
     );
   }

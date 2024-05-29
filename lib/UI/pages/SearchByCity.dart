@@ -1,6 +1,7 @@
 import 'package:theater_events/model/Model.dart';
 import 'package:theater_events/model/objects/Teatro.dart';
 import 'package:flutter/material.dart';
+import '../../model/objects/Cliente.dart';
 import '../widget/ThaterCard.dart';
 import 'ShowsInTheater.dart';
 
@@ -8,8 +9,9 @@ import 'ShowsInTheater.dart';
 
 class SearchByCity extends StatefulWidget {
   final String city;
+  final Cliente cliente;
 
-  SearchByCity({required this.city, Key? key}) : super(key: key);
+  SearchByCity({required this.cliente, required this.city, Key? key}) : super(key: key);
 
   @override
   _SearchByCityState createState() => _SearchByCityState();
@@ -85,7 +87,7 @@ class _SearchByCityState extends State<SearchByCity> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ShowsInTheater(theaterId: _theaters![index].id!),
+                    builder: (context) => ShowsInTheater(theaterId: _theaters![index].id!, cliente: widget.cliente),
                   ),
                 );
 

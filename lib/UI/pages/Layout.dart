@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
+import '../../model/objects/Cliente.dart';
 import '../behaviors/AppLocalizations.dart';
 import 'Home.dart';
 import 'LoginPage.dart';
@@ -69,9 +70,9 @@ class _LayoutState extends State<Layout> {
             ],
           ),
         ),
-        body: const TabBarView(
+        body: TabBarView(
           children: [
-            Home(),
+            Home(cliente: null),
 
           ],
         ),

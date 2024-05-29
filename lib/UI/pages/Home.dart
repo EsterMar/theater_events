@@ -3,6 +3,7 @@ import 'package:theater_events/model/support/extensions/StringCapitalization.dar
 import 'package:flutter/material.dart';
 
 import '../../model/Model.dart';
+import '../../model/objects/Cliente.dart';
 import '../../model/objects/Spettacolo.dart';
 import '../widget/CircularIconButton.dart';
 import 'SearchByCity.dart';
@@ -10,8 +11,9 @@ import 'ShowDetails.dart';
 
 
 class Home extends StatefulWidget {
+  final Cliente? cliente;
 
-  const Home({Key? key}) : super(key: key);
+  const Home({Key? key, required this.cliente}) : super(key: key);
 
   @override
   _HomeState createState() => _HomeState();
@@ -64,7 +66,7 @@ class _HomeState extends State<Home> {
                       String city= _searchByCity.text;
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => SearchByCity(city: city)),
+                        MaterialPageRoute(builder: (context) => SearchByCity(city: city, cliente: widget.cliente!)),
                       );
                     },
                     padding: EdgeInsets.zero,
@@ -151,6 +153,7 @@ class _HomeState extends State<Home> {
               ),
             ],
           ),
+
         ),
       ),
     );
@@ -174,7 +177,7 @@ class _HomeState extends State<Home> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => ShowDetails(show: shows.first),
+          builder: (context) => ShowDetails(show: shows.first, cliente: widget.cliente!),
         ),
       );
     } else {
