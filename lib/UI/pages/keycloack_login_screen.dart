@@ -1,12 +1,14 @@
 import 'dart:async';
 
+
 import 'package:flutter/material.dart';
 import 'package:theater_events/model/support/authentication/setToken.dart';
 
 import 'package:jwt_decoder/jwt_decoder.dart';
 
 import '../../model/Model.dart';
-import '../../model/objects/Cliente.dart';
+
+import '../../model/support/extensions/GlobalClient.dart';
 import 'Home.dart';
 
 
@@ -77,10 +79,9 @@ class _KeycloakLoginScreenState extends State<KeycloakLoginScreen> {
         isLoading = false;
       });
       print("isLoading: "+isLoading.toString());
-      //_navigateToLoginPage(context);
-      Cliente? cliente = await Model.sharedInstance.getByEmail(widget.username);
-      if (cliente != null) {
-        _navigateToHomePage(context, cliente);
+      clienteglobale = (await Model.sharedInstance.getByEmail(widget.username));
+      if (clienteglobale != null) {
+        _navigateToHomePage(context);
       } else {
         // Gestione degli errori nel recupero dell'oggetto Cliente
         showDialog(
@@ -156,11 +157,11 @@ class _KeycloakLoginScreenState extends State<KeycloakLoginScreen> {
       ),
     );
   }*/
-  void _navigateToHomePage(BuildContext context, Cliente cliente) {
+  void _navigateToHomePage(BuildContext context) {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (context) => Home(cliente: cliente),
+        builder: (context) => Home(),
       ),
     );
   }

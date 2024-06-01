@@ -8,13 +8,10 @@ import 'AuthenticationData.dart';
 
 
 
+
 class AccessTokenRequest {
   static Future<String?> getAccessToken() async {
-    /*String grantType = "password";
-    String username = "user1@testemail.com";
-    String clientId = "login-app";
-    String urlToken = Constants.REQUEST_LOGIN;
-    String password = "xsw2@WS";*/
+
 
     String grantType= "client_credentials";
     String clientId = "login-app";
@@ -32,12 +29,9 @@ class AccessTokenRequest {
       "grant_type": grantType,
       "client_id": clientId,
       "client_secret": clientSecret,
-      //"username": username,
-      //"password": password,
+
     };
 
-   // Uri uri = Uri.http(urlToken);
-    //print(uri);
     final response = await http.post(Uri.parse(urlToken),
          headers: headers, body: requestBody);
 
@@ -45,6 +39,10 @@ class AccessTokenRequest {
     print(response.statusCode);
     if (response.statusCode == 200) {
       final jsonResponse = json.decode(response.body);
+      AuthenticationData authenticationData = AuthenticationData.fromJson(
+          jsonResponse);
+      AuthenticationData.instance = authenticationData;
+      print("authenticationData token accessToken: "+authenticationData.toString());
       return jsonResponse["access_token"];
     } else {
       print("Error response code: ${response.statusCode}");

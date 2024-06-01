@@ -72,7 +72,7 @@ class _LayoutState extends State<Layout> {
         ),
         body: TabBarView(
           children: [
-            Home(cliente: null),
+            Home(),
 
           ],
         ),

@@ -1,6 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'package:theater_events/model/support/extensions/GlobalClient.dart';
 
 import '../../model/objects/Biglietto.dart';
 import '../../model/objects/Cliente.dart';
@@ -15,9 +15,8 @@ class CustomerInfo extends StatefulWidget {
   final int numberOfTickets;
   final Evento evento;
   final List<int> availablePostIds;
-  final Cliente cliente;
 
-  CustomerInfo({Key? key, required this.numberOfTickets, required this.evento, required this.availablePostIds, required this.cliente}) : super(key: key);
+  CustomerInfo({Key? key, required this.numberOfTickets, required this.evento, required this.availablePostIds}) : super(key: key);
 
   @override
   _CustomerInfoState createState() => _CustomerInfoState();
@@ -61,30 +60,13 @@ class _CustomerInfoState extends State<CustomerInfo> {
         paramAddTicket = ParamAddTicket(
           postoId: postoId,
           evento: widget.evento,
-          cliente: widget.cliente,
+          cliente: clienteglobale,
           ticketPrice: widget.evento.spettacolo?.price,
           clientName: name,
         );
 
+
         try {
-         /* var ticket = await Model.sharedInstance.addTicket(paramAddTicket);
-          if (ticket.id != -1) {
-            // Assicurati che il nome del cliente sia assegnato correttamente
-            ticket.name = name;
-
-            // Aggiungi l'ID del posto per confermare la posizione
-            var posto = await Model.sharedInstance.seatById(postoId);
-            print("posto id: ${ticket.posto!.id} fila: ${ticket.posto!.row} numero: ${ticket.posto!.seat}");
-
-            if (posto != null) {
-              ticket.posto = posto;
-
-              biglietti.add(ticket);
-              created = true;
-              ticketsCreated++;  // Incrementa il contatore dei biglietti creati
-            } else {
-              print('Errore: Impossibile trovare il posto con ID $postoId');
-            }*/
         var ticket = await Model.sharedInstance.addTicket(paramAddTicket);
         if (ticket.id != -1) {
           ticket.name = name;

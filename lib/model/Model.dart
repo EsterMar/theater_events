@@ -8,6 +8,7 @@ import 'package:theater_events/model/support/Constants.dart';
 import 'package:theater_events/model/support/ParamAddTicket.dart';
 import 'package:theater_events/model/support/authentication/AuthenticationData.dart';
 
+
 import 'objects/Biglietto.dart';
 import 'objects/Posto.dart';
 import 'objects/Spettacolo.dart';
@@ -216,10 +217,18 @@ class Model {
 
   Future<Posto?> seatById(int id_posto) async {
     Map<String, String> params = {'id_posto': id_posto.toString()};
-    print("id_posto: $id_posto");
+    print("Preparando la richiesta per id_posto: $id_posto con params: $params");
 
     try {
-      _restManager.setToken(authenticationData.getAccessToken()!);
+      String? token = authenticationData.getAccessToken();
+      if (token == null) {
+        print("Errore: il token è null");
+        return null;
+      }
+
+      _restManager.setToken(token);
+      print("Facendo richiesta a: ${Constants.ADDRESS_STORE_SERVER}${Constants.REQUEST_SEATS_BY_ID} con token: $token");
+
       final response = await _restManager.makeGetRequest(
         Constants.ADDRESS_STORE_SERVER,
         Constants.REQUEST_SEATS_BY_ID,
@@ -227,7 +236,7 @@ class Model {
       );
 
       // Stampa la risposta ricevuta per il debug
-      print("response: $response");
+      print("Risposta del server: $response");
 
       // Verifica se la risposta è vuota
       if (response == null || response.isEmpty) {
@@ -248,8 +257,8 @@ class Model {
       print("Errore durante la richiesta: $e");
       return null;
     }
-
   }
+
 
 
 
@@ -289,14 +298,22 @@ class Model {
 
     try {
       _restManager.setToken(authenticationData.getAccessToken()!);
+      print("token: "+_restManager.token.toString());
       final response = await _restManager.makeGetRequest(
         Constants.ADDRESS_STORE_SERVER,
         Constants.REQUEST_USER_BY_EMAIL,
         params,
       );
 
+
       // Stampa la risposta ricevuta per il debug
       print("response: $response");
+
+      // Controlla se la risposta è vuota
+      if (response.isEmpty) {
+        print("Risposta vuota dal server.");
+        return null;
+      }
 
       // Decodifica la risposta JSON in un oggetto Cliente
       try {
@@ -313,6 +330,7 @@ class Model {
       return null;
     }
   }
+
 
 
   Future<Cliente> addUser(Cliente user) async {

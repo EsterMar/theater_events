@@ -5,11 +5,13 @@ import 'package:flutter/material.dart';
 import '../../model/managers/RestManager.dart';
 import '../../model/support/authentication/accessToken.dart';
 import '../../model/support/authentication/KeycloakUserCreation.dart';
+import 'Home.dart';
 import 'LoginPage.dart';
 
 
 class UserRegistration extends StatefulWidget {
-  UserRegistration({Key? key}) : super(key: key);
+
+  UserRegistration({ Key? key}) : super(key: key);
 
 
   @override
@@ -74,21 +76,20 @@ class _UserRegistrationState extends State<UserRegistration> {
                   const SizedBox(height: 16.0),
                   ElevatedButton(
                     onPressed: () async {
-                      final String firstName=_firstNameFiledController.text;
-                      final String lastName=_lastNameFiledController.text;
-                      final String password=_passwordFiledController.text;
-                      final String username=_emailFiledController.text;
+                      final String firstName = _firstNameFiledController.text;
+                      final String lastName = _lastNameFiledController.text;
+                      final String password = _passwordFiledController.text;
+                      final String username = _emailFiledController.text;
 
                       accessToken = (await AccessTokenRequest.getAccessToken())!;
-                      print("token: "+accessToken.toString());
-
+                      print("token: " + accessToken.toString());
 
                       _register(accessToken);
                       if (accessToken != null) {
                         KeycloakUserCreation kuc = KeycloakUserCreation(firstName: firstName, lastName: lastName, password: password, username: username);
-                        print("kuc: "+kuc.toString());
+                        print("kuc: " + kuc.toString());
                         bool success = await kuc.createUserInKeycloak(accessToken);
-                        print("success: "+success.toString());
+                        print("success: " + success.toString());
 
                         if (success) {
                           showDialog(
@@ -99,11 +100,11 @@ class _UserRegistrationState extends State<UserRegistration> {
                                 content: Text('User created successfully.'),
                                 actions: [
                                   TextButton(
-                                    onPressed: () {
-                                      // Reindirizza alla pagina di login
+                                    onPressed: () async {
+                                      // Aggiungi un ritardo di 1 secondo prima di tentare il login
                                       Navigator.pushReplacement(
                                         context,
-                                        MaterialPageRoute(builder: (context) => LoginPage()),
+                                        MaterialPageRoute(builder: (context) => Home()),
                                       );
                                     },
                                     child: Text('OK'),
@@ -118,7 +119,7 @@ class _UserRegistrationState extends State<UserRegistration> {
                             builder: (BuildContext context) {
                               return AlertDialog(
                                 title: Text('Error'),
-                                content: Text('Email already used/Fill all fields '),
+                                content: Text('Email already used/Fill all fields'),
                                 actions: [
                                   TextButton(
                                     onPressed: () {
@@ -152,12 +153,13 @@ class _UserRegistrationState extends State<UserRegistration> {
                       }
                     },
                     child: const Text(
-                        'Register',
-                        style: TextStyle(
-                          color: Colors.red,
-                        )
+                      'Register',
+                      style: TextStyle(
+                        color: Colors.red,
+                      ),
                     ),
                   ),
+
                 ],
               ),
             ),
@@ -182,6 +184,7 @@ class _UserRegistrationState extends State<UserRegistration> {
       RestManager rm= Model.sharedInstance.getRestMan();
       rm.setToken(accessToken);
       await Model.sharedInstance.addUser(user);
+      await Future.delayed(Duration(seconds: 4));
     } catch (e) {
       print('Errore durante l\'aggiunta dell\'utente: $e');
     }

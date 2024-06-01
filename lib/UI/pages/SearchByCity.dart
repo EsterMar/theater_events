@@ -9,9 +9,8 @@ import 'ShowsInTheater.dart';
 
 class SearchByCity extends StatefulWidget {
   final String city;
-  final Cliente cliente;
 
-  SearchByCity({required this.cliente, required this.city, Key? key}) : super(key: key);
+  SearchByCity({required this.city, Key? key}) : super(key: key);
 
   @override
   _SearchByCityState createState() => _SearchByCityState();
@@ -45,25 +44,35 @@ class _SearchByCityState extends State<SearchByCity> {
   }
 
   Widget top() {
-    print (_theaters.toString());
+    print(_theaters.toString());
     return Padding(
       padding: EdgeInsets.all(10),
       child: Row(
         children: [
+          // Aggiungi l'icona della freccia per tornare indietro
+          IconButton(
+            icon: Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+          // Spazio per separare l'icona dal testo
+          SizedBox(width: 10),
           Text(
             _theaters != null && _theaters!.isNotEmpty
-                ? "Risultati per la città ${_city}:"
-                : "Non esiste nessun teatro nella città ${_city}!",
+                ? "Result for the city ${_city}:"
+                : "Doesn't exist any theater in the city ${_city}!",
             style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
               color: Colors.white,
             ),
           ),
-        ],//children
+        ],
       ),
     );
   }
+
 
   Widget bottom() {
     return !_searching
@@ -87,7 +96,7 @@ class _SearchByCityState extends State<SearchByCity> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ShowsInTheater(theaterId: _theaters![index].id!, cliente: widget.cliente),
+                    builder: (context) => ShowsInTheater(theaterId: _theaters![index].id!),
                   ),
                 );
 

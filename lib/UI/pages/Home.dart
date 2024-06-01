@@ -11,9 +11,8 @@ import 'ShowDetails.dart';
 
 
 class Home extends StatefulWidget {
-  final Cliente? cliente;
 
-  const Home({Key? key, required this.cliente}) : super(key: key);
+  const Home({Key? key}) : super(key: key);
 
   @override
   _HomeState createState() => _HomeState();
@@ -66,7 +65,7 @@ class _HomeState extends State<Home> {
                       String city= _searchByCity.text;
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => SearchByCity(city: city, cliente: widget.cliente!)),
+                        MaterialPageRoute(builder: (context) => SearchByCity(city: city)),
                       );
                     },
                     padding: EdgeInsets.zero,
@@ -177,7 +176,7 @@ class _HomeState extends State<Home> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => ShowDetails(show: shows.first, cliente: widget.cliente!),
+          builder: (context) => ShowDetails(show: shows.first),
         ),
       );
     } else {

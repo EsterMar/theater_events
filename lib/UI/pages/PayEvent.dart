@@ -9,9 +9,8 @@ import 'CustomerInfo.dart';
 
 class PayEvent extends StatefulWidget {
   final Evento evento;
-  final Cliente cliente;
 
-  PayEvent({Key? key, required this.evento, required this.cliente}) : super(key: key);
+  PayEvent({Key? key, required this.evento}) : super(key: key);
 
   @override
   _PayEventState createState() => _PayEventState();
@@ -168,7 +167,7 @@ class _PayEventState extends State<PayEvent> {
                   context,
                   MaterialPageRoute(
 
-                    builder: (context) => CustomerInfo(numberOfTickets: chosenTickets, availablePostIds: availablePostIds, evento: widget.evento, cliente: widget.cliente),
+                    builder: (context) => CustomerInfo(numberOfTickets: chosenTickets, availablePostIds: availablePostIds, evento: widget.evento),
                   ),
                 );
               },

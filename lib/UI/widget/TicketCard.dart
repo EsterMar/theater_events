@@ -35,7 +35,7 @@ class TicketCard extends StatelessWidget {
           onPressed: () {
             Navigator.pushAndRemoveUntil(
               context,
-              MaterialPageRoute(builder: (context) => Home(cliente: pat.cliente)), // Naviga alla schermata home
+              MaterialPageRoute(builder: (context) => Home()), // Naviga alla schermata home
                   (Route<dynamic> route) => false,
             );
           },

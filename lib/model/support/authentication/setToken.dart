@@ -60,4 +60,4 @@ class SetToken {
     print("Restituiamo il token di AuthenticationData");
     return AuthenticationData.getInstance().getAccessToken();
   }
-  }
+}

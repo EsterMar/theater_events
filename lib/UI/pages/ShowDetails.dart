@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:theater_events/UI/pages/PayEvent.dart';
-
 import '../../model/Model.dart';
-import '../../model/objects/Cliente.dart';
 import '../../model/objects/Evento.dart';
 import '../../model/objects/Spettacolo.dart';
 import 'package:intl/intl.dart';
 
 class ShowDetails extends StatefulWidget {
   final Spettacolo show;
-  final Cliente cliente;
 
-  ShowDetails({Key? key, required this.show, required this.cliente}) : super(key: key);
+  ShowDetails({Key? key, required this.show}) : super(key: key);
 
   @override
   _ShowDetailsState createState() => _ShowDetailsState();
@@ -54,6 +51,12 @@ class _ShowDetailsState extends State<ShowDetails> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              IconButton(
+                icon: Icon(Icons.arrow_back, color: Colors.white),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
               SizedBox(height:10),
               Text(
                 _show.title!,
@@ -100,7 +103,7 @@ class _ShowDetailsState extends State<ShowDetails> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Trama: ',
+            'Plot: ',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -117,7 +120,7 @@ class _ShowDetailsState extends State<ShowDetails> {
           ),
           SizedBox(height: 10),
           Text(
-            'Genere: ',
+            'Genre: ',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -135,7 +138,7 @@ class _ShowDetailsState extends State<ShowDetails> {
           SizedBox(height: 20),
           // Eventi associati allo spettacolo
           Text(
-            'Eventi:',
+            'Events:',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -145,7 +148,7 @@ class _ShowDetailsState extends State<ShowDetails> {
           SizedBox(height: 5),
           _eventi != null
               ? _eventi!.isEmpty
-              ? Text('Nessun evento disponibile', style: TextStyle(color: Colors.white))
+              ? Text('No available event', style: TextStyle(color: Colors.white))
               : ListView.builder(
             shrinkWrap: true,
             itemCount: _eventi!.length,
@@ -154,7 +157,7 @@ class _ShowDetailsState extends State<ShowDetails> {
               if (evento != null) {
                 return ListTile(
                   subtitle: Text(
-                    'Data: ${formatDate(evento.data ?? DateTime.now())}, Ore: ${evento.hours ?? 'Orario non disponibile'}',
+                    'Data: ${formatDate(evento.data ?? DateTime.now())}, Ore: ${evento.hours ?? 'Not available'}',
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.white,
@@ -164,7 +167,7 @@ class _ShowDetailsState extends State<ShowDetails> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => PayEvent(evento: evento, cliente: widget.cliente),
+                        builder: (context) => PayEvent(evento: evento),
                       ),
                     );
                   },
@@ -190,7 +193,7 @@ class _ShowDetailsState extends State<ShowDetails> {
       });
     }).catchError((error) {
       // Gestire eventuali errori qui
-      print("Errore durante il recupero degli eventi: $error");
+      print("Error during the rescue of the events: $error");
       setState(() {
         _loading = false;
       });

@@ -1,15 +1,13 @@
 import 'package:theater_events/model/Model.dart';
 import 'package:flutter/material.dart';
-import '../../model/objects/Cliente.dart';
 import '../../model/objects/Spettacolo.dart';
 import '../widget/ShowCard.dart';
 import 'ShowDetails.dart';
 
 class ShowsInTheater extends StatefulWidget {
   final int theaterId;
-  final Cliente cliente;
 
-  ShowsInTheater({required this.theaterId, required this.cliente, Key? key}) : super(key: key);
+  ShowsInTheater({required this.theaterId, Key? key}) : super(key: key);
 
   @override
   _ShowsInTheaterState createState() => _ShowsInTheaterState();
@@ -43,15 +41,24 @@ class _ShowsInTheaterState extends State<ShowsInTheater> {
     );
   }
 
+
   Widget top() {
     return Padding(
       padding: EdgeInsets.all(10),
       child: Row(
         children: [
+          IconButton(
+            icon: Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+          // Spazio per separare l'icona dal testo
+          SizedBox(width: 10),
           Text(
             _shows != null && _shows!.isNotEmpty
-                ? "Spettacoli disponibili:"
-                : "Non ci sono spettacoli disponibili per questo teatro!",
+                ? "Available shows:"
+                : "There arent't available show for this theater!",
             style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
@@ -74,7 +81,7 @@ class _ShowsInTheaterState extends State<ShowsInTheater> {
   }
 
   Widget noResults() {
-    return Text("Nessun risultato!",
+    return Text("No result!",
         style: TextStyle(color: Colors.white));
   }
 
@@ -90,7 +97,7 @@ class _ShowsInTheaterState extends State<ShowsInTheater> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ShowDetails(show: _shows![index], cliente: widget.cliente),
+                    builder: (context) => ShowDetails(show: _shows![index]),
                   ),
                 );
               },

@@ -1,7 +1,6 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-import '../Constants.dart';
 
 class KeycloakUserCreation {
   final String firstName;
