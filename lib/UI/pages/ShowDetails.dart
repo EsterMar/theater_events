@@ -45,48 +45,53 @@ class _ShowDetailsState extends State<ShowDetails> {
   }
 
   Widget top() {
-    return Padding(
+      return Padding(
         padding: EdgeInsets.all(10),
-
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              IconButton(
-                icon: Icon(Icons.arrow_back, color: Colors.white),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-              SizedBox(height:10),
-              Text(
-                _show.title!,
-                style: const TextStyle(
-                  fontSize: 40,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // Row per la freccia e il titolo dello spettacolo
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                IconButton(
+                  icon: Icon(Icons.arrow_back, color: Colors.white),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
                 ),
-              ),
-              SizedBox(height: 10), // Spazio tra il testo e l'immagine
-              // Immagine
-              Container(
-                width: 400, // Larghezza desiderata dell'immagine
-                height: 400, // Altezza desiderata dell'immagine
-                decoration: BoxDecoration(
-                  shape: BoxShape.rectangle,
-                  image: DecorationImage(
-                    image: AssetImage(getImagePth(_show.title!)),
-                    // Inserisci il percorso dell'immagine
-                    fit: BoxFit.cover, // Modalità di adattamento dell'immagine
+                Spacer(), // Spazio flessibile per spingere il titolo al centro
+                Text(
+                  _show.title!,
+                  style: const TextStyle(
+                    fontSize: 40,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
                   ),
-
+                ),
+                Spacer(), // Spazio flessibile per bilanciare la riga
+              ],
+            ),
+            SizedBox(height: 10), // Spazio tra il testo e l'immagine
+            // Immagine
+            Container(
+              width: 400, // Larghezza desiderata dell'immagine
+              height: 400, // Altezza desiderata dell'immagine
+              decoration: BoxDecoration(
+                shape: BoxShape.rectangle,
+                image: DecorationImage(
+                  image: AssetImage(getImagePth(_show.title!)),
+                  fit: BoxFit.cover, // Modalità di adattamento dell'immagine
                 ),
               ),
-            ],
-          ),
-    );
-  }
+            ),
+          ],
+        ),
+      );
+    }
 
-  String getImagePth(String title) {
+
+    String getImagePth(String title) {
     return "C:/Users/Ester/Desktop/Piattaforme/esercitazion/$title.jpg";
   }
 
