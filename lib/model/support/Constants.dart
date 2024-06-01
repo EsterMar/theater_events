@@ -22,12 +22,13 @@ class Constants {
   static final String REQUEST_FREE_SEATS= "posto/get_free_seats";
   static final String REQUEST_SEATS_BY_ID= "posto/seats_by_id";
   static final String REQUEST_SEATS_NUMBER = "/sala/seats";
-  static final String REQUEST_SEARCH_THEATER = "/teatro/search/by_city";
+  static final String REQUEST_SEARCH_THEATER = "/teatro/search/by_city_paged";
   static final String REQUEST_SEARCH_SHOW = "/spettacolo/search/byTitle";
   static final String REQUEST_LIST_EVENTS = "/evento/search/by_show";
   static final String REQUEST_LIST_SHOWS = "/spettacolo/search/by_theater";
   static final String REQUEST_BUY_TICKET = "/biglietto/create";
   static final String REQUEST_PRICE_TICKETS = "/spettacolo/price_by_numberTickets";
+  static final String REQUEST_PAGED_SHOWS= "/spettacolo/search/paged";
 
 
   // responses

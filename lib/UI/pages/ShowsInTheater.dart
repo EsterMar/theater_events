@@ -1,5 +1,5 @@
-import 'package:theater_events/model/Model.dart';
 import 'package:flutter/material.dart';
+import 'package:theater_events/model/Model.dart';
 import '../../model/objects/Spettacolo.dart';
 import '../widget/ShowCard.dart';
 import 'ShowDetails.dart';
@@ -17,7 +17,10 @@ class _ShowsInTheaterState extends State<ShowsInTheater> {
   bool _searching = false;
   List<Spettacolo>? _shows = List.empty();
   late int _theaterId;
-
+  int _currentPage = 0;
+  int _pageSize = 3;
+  String _sortBy = 'id';
+  bool _hasMoreShows = true; // Flag per controllare se ci sono più spettacoli disponibili
 
   @override
   void initState() {
@@ -35,12 +38,12 @@ class _ShowsInTheaterState extends State<ShowsInTheater> {
           children: [
             top(),
             bottom(),
+            paginationControls(),
           ],
         ),
       ),
     );
   }
-
 
   Widget top() {
     return Padding(
@@ -58,7 +61,7 @@ class _ShowsInTheaterState extends State<ShowsInTheater> {
           Text(
             _shows != null && _shows!.isNotEmpty
                 ? "Available shows:"
-                : "There arent't available show for this theater!",
+                : "There aren't available shows for this theater!",
             style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
@@ -81,36 +84,63 @@ class _ShowsInTheaterState extends State<ShowsInTheater> {
   }
 
   Widget noResults() {
-    return Text("No result!",
-        style: TextStyle(color: Colors.white));
+    return Text("No result!", style: TextStyle(color: Colors.white));
   }
 
   Widget yesResults() {
     return Expanded(
-      child: Container(
-        child: ListView.builder(
-          itemCount: _shows?.length,
-          itemBuilder: (context, index) {
-            return GestureDetector(
-              onTap: () {
-                // Naviga verso la pagina dei dettagli passando lo spettacolo selezionato
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ShowDetails(show: _shows![index]),
-                  ),
-                );
-              },
-              child: SizedBox(
-                height: 200,
-                child: ShowCard(
-                  show: _shows![index],
+      child: ListView.builder(
+        itemCount: _shows?.length,
+        itemBuilder: (context, index) {
+          return GestureDetector(
+            onTap: () {
+              // Naviga verso la pagina dei dettagli passando lo spettacolo selezionato
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ShowDetails(show: _shows![index]),
                 ),
+              );
+            },
+            child: SizedBox(
+              height: 200,
+              child: ShowCard(
+                show: _shows![index],
               ),
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
+    );
+  }
+
+  Widget paginationControls() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: _currentPage > 0 ? () {
+            setState(() {
+              _currentPage--;
+              _search();
+            });
+          } : null,
+        ),
+        Text(
+          "Page ${_currentPage + 1}",
+          style: TextStyle(color: Colors.white),
+        ),
+        IconButton(
+          icon: Icon(Icons.arrow_forward, color: Colors.white),
+          onPressed: _hasMoreShows ? () {
+            setState(() {
+              _currentPage++;
+              _search();
+            });
+          } : null,
+        ),
+      ],
     );
   }
 
@@ -119,11 +149,13 @@ class _ShowsInTheaterState extends State<ShowsInTheater> {
       _searching = true;
       _shows = null;
     });
-    Model.sharedInstance.allShowsFromTheater(_theaterId).then((result) {
+    Model.sharedInstance.allShowsFromTheater(_theaterId, _currentPage, _pageSize, _sortBy).then((result) {
       setState(() {
         _searching = false;
         // Verifica che result non sia nullo prima di assegnarlo a _shows
         _shows = result ?? [];
+        // Imposta _hasMoreShows a true se la lunghezza dei risultati è uguale a _pageSize, altrimenti false
+        _hasMoreShows = _shows!.length == _pageSize;
       });
     });
   }

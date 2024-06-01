@@ -27,7 +27,7 @@ class Model {
     return _restManager;
   }
 
-  Future<List<Teatro>> searchTheater(String city) async {
+  /*Future<List<Teatro>> searchTheater(String city) async {
     Map<String, String> params = Map();
     params["city"] = city;
     print("city: " + city);
@@ -43,7 +43,30 @@ class Model {
       print("error in searchByCity: "+e.toString());
       return List<Teatro>.empty(); // Restituisci una lista vuota in caso di errore nella ricerca del teatro
     }
+  }*/
+
+  Future<List<Teatro>> searchTheater(String city, int page, int size, String sortBy) async {
+    Map<String, String> params = {
+      "city": city,
+      "pageNumber": page.toString(),
+      "pageSize": size.toString(),
+      "sortBy": sortBy
+    };
+    print("city: " + city);
+    try {
+      _restManager.setToken(authenticationData.getAccessToken()!);
+      final response = await _restManager.makeGetRequest(Constants.ADDRESS_STORE_SERVER, Constants.REQUEST_SEARCH_THEATER, params);
+      List<Teatro> theater = (json.decode(response) as List).map((i) => Teatro.fromJson(i)).toList();
+      print("response: " + response);
+      print(theater);
+      return theater;
+    } catch (e) {
+      print("error in searchByCity: " + e.toString());
+      return List<Teatro>.empty(); // Restituisci una lista vuota in caso di errore nella ricerca del teatro
+    }
   }
+
+
 
 
   Future<List<Spettacolo>> searchShow(String titolo) async {
@@ -109,9 +132,15 @@ class Model {
     }
   }
 
-  Future<List<Spettacolo>> allShowsFromTheater(int id_teatro) async {
-    Map<String, String> params = {'id_teatro': id_teatro.toString()};
-    print("parametro teatro: $id_teatro");
+
+  Future<List<Spettacolo>> allShowsFromTheater(int id_teatro, int pageNumber, int pageSize, String sortBy) async {
+    Map<String, String> params = {
+      'id_teatro': id_teatro.toString(),
+      'pageNumber': pageNumber.toString(),
+      'pageSize': pageSize.toString(),
+      'sortBy': sortBy,
+    };
+    print("parametro teatro: $id_teatro, pageNumber: $pageNumber, pageSize: $pageSize, sortBy: $sortBy");
 
     try {
       _restManager.setToken(authenticationData.getAccessToken()!);
@@ -136,6 +165,40 @@ class Model {
       return shows;
     } catch (e) {
       print("error in allShowFromTheater show: $e");
+      return List<Spettacolo>.empty(); // Restituisci una lista vuota in caso di errore
+    }
+  }
+
+  Future<List<Spettacolo>> getAllShowsPaginated(int pageNumber, int pageSize, String sortBy) async {
+    Map<String, String> params = {
+      'pageNumber': pageNumber.toString(),
+      'pageSize': pageSize.toString(),
+      'sortBy': sortBy
+    };
+
+    try {
+      _restManager.setToken(authenticationData.getAccessToken()!);
+      final response = await _restManager.makeGetRequest(
+        Constants.ADDRESS_STORE_SERVER,
+        Constants.REQUEST_PAGED_SHOWS,
+        params,
+      );
+
+      // Stampa la risposta ricevuta per il debug
+      print("response: $response");
+
+      // Decodifica la risposta JSON
+      final List<dynamic> jsonList = json.decode(response);
+
+      // Converte la lista di mappe JSON in una lista di oggetti Spettacolo
+      List<Spettacolo> shows = jsonList.map((jsonItem) {
+        return Spettacolo.fromJson(jsonItem as Map<String, dynamic>);
+      }).toList();
+
+      print("shows: $shows");
+      return shows;
+    } catch (e) {
+      print("error in getAllShowsPaginated: $e");
       return List<Spettacolo>.empty(); // Restituisci una lista vuota in caso di errore
     }
   }
@@ -168,8 +231,6 @@ class Model {
       return List<int>.empty(); // Restituisci una lista vuota in caso di errore
     }
   }
-
-
 
 
   Future<int> allSeatsFromSala(int id_sala) async {

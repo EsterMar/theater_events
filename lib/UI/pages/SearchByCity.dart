@@ -1,11 +1,8 @@
-import 'package:theater_events/model/Model.dart';
-import 'package:theater_events/model/objects/Teatro.dart';
 import 'package:flutter/material.dart';
-import '../../model/objects/Cliente.dart';
+import 'package:theater_events/model/Model.dart';
+import '../../model/objects/Teatro.dart';
 import '../widget/ThaterCard.dart';
 import 'ShowsInTheater.dart';
-
-
 
 class SearchByCity extends StatefulWidget {
   final String city;
@@ -18,8 +15,12 @@ class SearchByCity extends StatefulWidget {
 
 class _SearchByCityState extends State<SearchByCity> {
   late String _city;
-  List<Teatro>? _theaters= List.empty();
+  List<Teatro>? _theaters = List.empty();
   bool _searching = false;
+  int _currentPage = 0;
+  String _sortBy = 'id';
+  int _pageSize = 3;
+  bool _hasMoreTheaters = true;
 
   @override
   void initState() {
@@ -37,6 +38,7 @@ class _SearchByCityState extends State<SearchByCity> {
           children: [
             top(),
             bottom(),
+            paginationControls(),
           ],
         ),
       ),
@@ -44,7 +46,6 @@ class _SearchByCityState extends State<SearchByCity> {
   }
 
   Widget top() {
-    print(_theaters.toString());
     return Padding(
       padding: EdgeInsets.all(10),
       child: Row(
@@ -73,15 +74,14 @@ class _SearchByCityState extends State<SearchByCity> {
     );
   }
 
-
   Widget bottom() {
     return !_searching
-        ? _theaters == null?  //|| _theaters!.isEmpty
-          SizedBox.shrink():
-    _theaters!.isEmpty?
-          noResults():
-           yesResults():
-    CircularProgressIndicator();
+        ? _theaters == null
+        ? SizedBox.shrink()
+        : _theaters!.isEmpty
+        ? noResults()
+        : yesResults()
+        : CircularProgressIndicator();
   }
 
   Widget yesResults() {
@@ -89,17 +89,17 @@ class _SearchByCityState extends State<SearchByCity> {
       child: Container(
         child: ListView.builder(
           itemCount: _theaters?.length,
-          itemBuilder: (context,index) {
+          itemBuilder: (context, index) {
             return GestureDetector(
               onTap: () {
                 // Naviga verso la pagina dei dettagli passando il prodotto selezionato
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ShowsInTheater(theaterId: _theaters![index].id!),
+                    builder: (context) =>
+                        ShowsInTheater(theaterId: _theaters![index].id!),
                   ),
                 );
-
               },
               child: SizedBox(
                 height: 200, // regola l'altezza
@@ -116,23 +116,55 @@ class _SearchByCityState extends State<SearchByCity> {
 
   Widget noResults() {
     return Text("No_results!",
-                  style: TextStyle( color: Colors.white)
+        style: TextStyle(color: Colors.white));
+  }
+
+  Widget paginationControls() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: _currentPage > 0
+              ? () {
+            setState(() {
+              _currentPage--;
+              _search();
+            });
+          }
+              : null,
+        ),
+        Text(
+          "Page ${_currentPage + 1}",
+          style: TextStyle(color: Colors.white),
+        ),
+        IconButton(
+          icon: Icon(Icons.arrow_forward, color: Colors.white),
+          onPressed: _hasMoreTheaters
+              ? () {
+            setState(() {
+              _currentPage++;
+              _search();
+            });
+          }
+              : null,
+        ),
+      ],
     );
   }
 
   void _search() {
     setState(() {
       _searching = true;
-      _theaters = null;
     });
-    Model.sharedInstance.searchTheater(_city).then((result) {
+    Model.sharedInstance
+        .searchTheater(_city, _currentPage, _pageSize, _sortBy)
+        .then((result) {
       setState(() {
         _searching = false;
-        // Verifica che result non sia nullo prima di assegnarlo a _theaters
         _theaters = result ?? [];
+        _hasMoreTheaters = _theaters!.length == _pageSize;
       });
     });
   }
 }
-
-
